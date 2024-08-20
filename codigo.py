@@ -17,7 +17,7 @@ secOpcoes = {
     9: "Voltar ao menu principal"
 }
 
-## Menu ##
+## Main ##
 while True:
     # Estrutura menu principal
     print("------ MENU PRINCIPAL ------\n")
@@ -82,7 +82,3 @@ while True:
                 print("Atualizar operação")
             case 4:
                 print("Excluir operação")
-            case _:
-                print("Opção inválida")  # Caso não necessário devido à verificação anterior
-
-        # Após a operação, o menu secundário será exibido novamente até que o usuário escolha a opção 9.
