@@ -47,3 +47,9 @@ secOpcoes = {
     4: "Excluir",
     9: "Sair"
 }
+
+# Obtém o valor correspondente ou define como "opção inválida"
+secDesc = secOpcoes.get(secTipo, "Opção inválida")
+
+#Informando Seleção
+print("\n ***** [{}] *****\n".format(secDesc).upper())
