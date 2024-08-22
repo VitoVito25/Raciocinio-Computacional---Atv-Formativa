@@ -28,21 +28,32 @@ while True:
     print("(5) Gerenciar Matriculas")
     print("(9) Sair")
 
-    # Solicita que o usuário insira uma opção
-    gerTipo = int(input("Informe a opção desejada: "))
+    while True:
+        try:
+            # Solicita que o usuário insira uma opção
+            gerTipo = int(input("Informe a opção desejada: "))
 
-    # Obtém o valor correspondente ou define como "opção inválida"
-    gerDesc = gerOpcoes.get(gerTipo, "Opção inválida")
+            # Obtém o valor correspondente ou define como "opção inválida"
+            gerDesc = gerOpcoes.get(gerTipo, "Opção inválida")
 
-    # Verifica se a opção é válida
-    if gerTipo not in gerOpcoes:
-        print("----- [{}] VOLTANDO AO MENU PRINCIPAL... -----\n".format(gerDesc).upper())
-        continue
+            # Verifica se a opção é válida
+            if gerTipo not in gerOpcoes:
+                print("----- [{}] VOLTANDO AO MENU PRINCIPAL... -----\n".format(gerDesc).upper())
+                continue
 
-    # Verifica se o usuário escolheu sair
+            # Verifica se o usuário escolheu sair
+            if gerTipo == 9:
+                print("----- SAINDO DO SISTEMA... -----")
+                break
+            
+            # Se o gerTipo é válido e não é 9, sai do loop
+            break
+
+        except ValueError:
+            print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
+
     if gerTipo == 9:
-        print("----- SAINDO DO SISTEMA... -----")
-        break
+        break  # Sai do loop externo
 
     # Estrutura menu secundário
     while True:
