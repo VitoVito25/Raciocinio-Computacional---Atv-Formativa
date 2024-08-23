@@ -1,4 +1,11 @@
-from utils import clear_console
+import os
+import platform
+
+def clear_console():
+    if platform.system() == "Windows":
+        os.system('cls')
+    else:  # Para Linux e macOS
+        os.system('clear')
 
 # Dicionário para mapear opções a descrições do menu principal
 gerOpcoes = {
@@ -46,21 +53,33 @@ while True:
             if gerTipo not in gerOpcoes:
                 clear_console()
                 print("----- [{}] VOLTANDO AO MENU PRINCIPAL... -----\n".format(gerDesc).upper())
+                input("Pressione ENTER para continuar...")
+                clear_console()
                 continue
 
             # Verifica se o usuário escolheu sair
             if gerTipo == 9:
                 clear_console()
                 print("----- SAINDO DO SISTEMA... -----")
+                input("Pressione ENTER para continuar...")
                 break
             
             # Se o gerTipo é válido e não é 9, sai do loop
-            break
+            ## Colocando delimitador por conta da solicitação da AS1
+            if gerTipo == 1: 
+                break
+            else:
+                clear_console()
+                print("----- OPÇÂO EM DESENVOLVIMENTO -----")
+                input("Pressione ENTER para continuar...")
+                clear_console()                
 
         #Se informar algo != int informa mensagem
         except ValueError:
             clear_console()
             print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
+            input("Pressione ENTER para continuar...")
+            clear_console()
 
     if gerTipo == 9:
         break  # Sai do loop externo
@@ -101,6 +120,8 @@ while True:
             except ValueError:    
                 clear_console()
                 print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
+                input("Pressione ENTER para continuar...")
+                clear_console()
 
         # Se o secTipo é válido e não é 9, loop
         if secTipo == 9:
@@ -123,71 +144,87 @@ while True:
                     #Listar    
                     case 2:
                         if not estudantes:
-                            print("A lista de estudantes está vazia. \n")
+                            print("Não há estudantes cadastrados. \n")
                         else:
                             print("Lista de estudantes:")
                             for estudante in estudantes:
-                                print(estudante)
+                                print(" - {}".format(estudante))
                         input("Pressione ENTER para retornar ao Menu...")
                         clear_console()
                     case 3:
                         print("----- EM DESENVOLVIMENTO -----")
-                        break
+                        input("Pressione ENTER para continuar...")
                     case 4:
                         print("----- EM DESENVOLVIMENTO -----")
-                        break
+                        input("Pressione ENTER para continuar...")
             case 2 :
                 match secTipo:
                     case 1:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 2:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                     case 3:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 4:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break        
             case 3 :
                 match secTipo:
                     case 1:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 2:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 3:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 4:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
             case 4 :
                 match secTipo:
                     case 1:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 2:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 3:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 4:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break            
             case 5 :
                 match secTipo:
                     case 1:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 2:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 3:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
                     case 4:
                         print("----- EM DESENVOLVIMENTO -----")
+                        input("Pressione ENTER para continuar...")
                         break
