@@ -19,6 +19,10 @@ secOpcoes = {
     9: "Voltar ao menu principal"
 }
 
+# Estrutura de listagem de estudantes
+estudantes = []
+
+
 ## Main ##
 clear_console()
 while True:
@@ -102,17 +106,88 @@ while True:
         if secTipo == 9:
             break  # Sai do loop externo        
 
-        #Informa a abertura do segundo menu
+        #Informa a abertura do menu
         clear_console()
         print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
 
-        #Operações de fato
-        match secTipo:
-            case 1:
-                print("Incluir operação")
-            case 2:
-                print("Listar operação")
-            case 3:
-                print("Atualizar operação")
-            case 4:
-                print("Excluir operação")
+        match gerTipo:
+            #Estudantes
+            case 1 : 
+                match secTipo:
+                    #Incluir
+                    case 1:
+                        estudantes.append(str(input("Insira o nome do estudante: ")))
+                        input("Pressione ENTER para continuar...")
+                        clear_console()
+                        print("*** Estudante inserido com Sucesso! ***")
+                    #Listar    
+                    case 2:
+                        if not estudantes:
+                            print("A lista de estudantes está vazia. \n")
+                        else:
+                            print("Lista de estudantes:")
+                            for estudante in estudantes:
+                                print(estudante)
+                        input("Pressione ENTER para retornar ao Menu...")
+                        clear_console()
+                    case 3:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 4:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+            case 2 :
+                match secTipo:
+                    case 1:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 2:
+                        print("----- EM DESENVOLVIMENTO -----")
+                    case 3:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 4:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break        
+            case 3 :
+                match secTipo:
+                    case 1:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 2:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 3:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 4:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+            case 4 :
+                match secTipo:
+                    case 1:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 2:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 3:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 4:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break            
+            case 5 :
+                match secTipo:
+                    case 1:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 2:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 3:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
+                    case 4:
+                        print("----- EM DESENVOLVIMENTO -----")
+                        break
