@@ -116,20 +116,24 @@ while True:
                 match secTipo:
                     #Incluir
                     case 1:
-                        estudantes.append(str(input("Insira o nome do estudante: ")))
+                        nome = input("Insira o nome do estudante: ")
+                        cpf = input("Insira o CPF do estudante: ")
+                        codigo = len(estudantes) + 1  # Gera um código sequencial para o estudante
+                        estudante = {"codigo": codigo, "nome": nome, "cpf": cpf}
+                        estudantes.append(estudante)
                         input("Pressione ENTER para continuar...")
+
                         clear_console()
                         print("*** Estudante inserido com Sucesso! ***")
                     #Listar    
                     case 2:
                         if not estudantes:
-                            print("A lista de estudantes está vazia. \n")
+                            print("A lista de estudantes está vazia.\n")
                         else:
                             print("Lista de estudantes:")
                             for estudante in estudantes:
-                                print(estudante)
+                                print(f"Código: {estudante['codigo']}, Nome: {estudante['nome']}, CPF: {estudante['cpf']}")
                         input("Pressione ENTER para retornar ao Menu...")
-                        clear_console()
                     case 3:
                         print("----- EM DESENVOLVIMENTO -----")
                         break
