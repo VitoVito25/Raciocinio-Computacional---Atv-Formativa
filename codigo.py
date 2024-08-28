@@ -23,6 +23,16 @@ secOpcoes = {
 estudantes = []
 
 
+# Teste
+"""
+estudante = {"codigo": 1, "nome": 1, "cpf": 1}
+estudantes.append(estudante)
+estudante = {"codigo": 2, "nome": 2, "cpf": 2}
+estudantes.append(estudante)
+estudante = {"codigo": 3, "nome": 3, "cpf": 3}
+estudantes.append(estudante)
+"""
+
 ## Main ##
 clear_console()
 while True:
@@ -116,26 +126,157 @@ while True:
                 match secTipo:
                     #Incluir
                     case 1:
-                        estudantes.append(str(input("Insira o nome do estudante: ")))
+                        nome = input("Insira o nome do estudante: ")
+                        cpf = input("Insira o CPF do estudante: ")
+                        codigo = len(estudantes) + 1  # Gera um código sequencial para o estudante
+                        estudante = {"codigo": codigo, "nome": nome, "cpf": cpf}
+                        estudantes.append(estudante)
                         input("Pressione ENTER para continuar...")
+
                         clear_console()
                         print("*** Estudante inserido com Sucesso! ***")
                     #Listar    
                     case 2:
                         if not estudantes:
-                            print("A lista de estudantes está vazia. \n")
+                            print("A lista de estudantes está vazia.\n")
+                            input("Pressione ENTER para continuar...")
                         else:
                             print("Lista de estudantes:")
                             for estudante in estudantes:
-                                print(estudante)
+                                print(f"Código: {estudante['codigo']}, Nome: {estudante['nome']}, CPF: {estudante['cpf']}")
                         input("Pressione ENTER para retornar ao Menu...")
                         clear_console()
+                    #Editar    
                     case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
+                        # Verifica se a lista de estudantes está vazia
+                        if not estudantes:
+                            print("A lista de estudantes está vazia.\n")
+                            input("Pressione ENTER para continuar...")
+                            clear_console()
+                        else:
+                            while True:
+                                try:
+                                    # Insira o código do estudante a ser editado
+                                    codigo_edicao = int(input("Insira o Código do Estudante que será editado: "))
+
+                                    # Procura o estudante com o código informado
+                                    estudante_encontrado = None
+                                    for estudante in estudantes:
+                                        if estudante["codigo"] == codigo_edicao:
+                                            estudante_encontrado = estudante
+
+                                            # Armazena os dados antigos para comparação posterior
+                                            dados_anteriores = estudante_encontrado.copy()
+                                            break
+                                    
+                                    # Permite que o usuário atualize o nome, CPF e/ou código
+                                    if estudante_encontrado:
+                                        while True:
+                                            #Validacao do novo codigo
+                                            try:
+                                                print(f"Estudante encontrado: Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
+                                                novo_codigo = input(f"Insira o novo código (ou pressione ENTER para manter '{estudante_encontrado['codigo']}'): ")
+                                                
+                                                if novo_codigo == "":  # Se o usuário pressionar ENTER, mantém o código atual
+                                                    break
+                                                
+                                                novo_codigo = int(novo_codigo)  # Tenta converter a entrada para inteiro
+
+                                                # Verifica se o novo código já está em uso
+                                                codigo_existente = any(estudante['codigo'] == novo_codigo for estudante in estudantes)
+                                                
+                                                if codigo_existente:
+                                                    print(f"*** O código {novo_codigo} já está em uso. Por favor, escolha um código diferente. ***")
+                                                    input("Pressione ENTER para tentar novamente...")
+                                                    clear_console()
+                                                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+                                                else:
+                                                    estudante_encontrado['codigo'] = novo_codigo  # Atualiza o código do estudante
+                                                    break
+                                                
+                                            except ValueError:
+                                                clear_console()
+                                                print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
+                                                input("Pressione ENTER para tentar novamente...")
+                                                clear_console()
+                                                print("----- {} {} -----\n".format(secDesc, gerDesc).upper())                                        
+                                        
+                                        # Solicita novos Nome e CPF ou mantém os atuais se o usuário não informar nada
+                                        novo_nome = input(f"Insira o novo nome (ou pressione ENTER para manter '{estudante_encontrado['nome']}'): ")
+                                        novo_cpf = input(f"Insira o novo CPF (ou pressione ENTER para manter '{estudante_encontrado['cpf']}'): ")
+
+                                        if novo_nome:
+                                            estudante_encontrado['nome'] = novo_nome
+                                        if novo_cpf:
+                                            estudante_encontrado['cpf'] = novo_cpf
+
+                                        # Exibe os dados anteriores e os dados atualizados
+                                        clear_console()
+                                        print("\nDados anteriores:")
+                                        print(f"Código: {dados_anteriores['codigo']}, Nome: {dados_anteriores['nome']}, CPF: {dados_anteriores['cpf']}")
+                                        print("\nDados atualizados:")
+                                        print(f"Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
+
+                                        print(f"\n*** Estudante com código {codigo_edicao} atualizado com sucesso! ***")
+                                        input("Pressione ENTER para continuar...")
+                                        clear_console()
+                                        break
+                                    else:
+                                        # Informa caso não tenha o estudante com o código informado
+                                        clear_console()
+                                        print(f"*** Nenhum estudante encontrado com o código {codigo_edicao}. ***")
+                                        input("Pressione ENTER para continuar...")
+                                        clear_console()
+                                        print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+
+                                # Trata o erro caso o usuário não informe um número inteiro
+                                except ValueError:
+                                    clear_console()
+                                    print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
+                                    input("Pressione ENTER para continuar...")
+                                    clear_console()
+                                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+
+                    #Excluir
                     case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
+                        #Verifica se a lista de Estudantes esta vazia
+                        if not estudantes:
+                            print("A lista de estudantes está vazia.\n")
+                            input("Pressione ENTER para continuar...")
+                            clear_console()
+                        else:
+                            while True:
+                                try:
+                                    #Insira o codigo do estudante a ser excluido
+                                    codigo_exclusao = int(input("Insira o Codigo do Estudante que será excluído: "))
+
+                                    # Procura o estudante com o código informado
+                                    estudante_encontrado = None
+                                    for estudante in estudantes:
+                                        if estudante["codigo"] == codigo_exclusao:
+                                            estudante_encontrado = estudante
+                                            break
+
+                                    if estudante_encontrado:
+                                        estudantes.remove(estudante_encontrado)
+                                        print(f"*** Estudante com código {codigo_exclusao} excluído com sucesso! ***")
+                                        input("Pressione ENTER para continuar...")
+                                        clear_console()
+                                        break 
+                                    else:
+                                        #Informa caso nao tenha o estudante com o codigo informado
+                                        clear_console()
+                                        print(f"*** Nenhum estudante encontrado com o código {codigo_exclusao}. ***")
+                                        input("Pressione ENTER para continuar...")
+                                        clear_console()
+                                        print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+
+                                #Trata o erro caso o usuario nao informe um int
+                                except ValueError:
+                                    print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
+                                    input("Pressione ENTER para continuar...")
+                                    clear_console()
+                                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
             case 2 :
                 match secTipo:
                     case 1:
