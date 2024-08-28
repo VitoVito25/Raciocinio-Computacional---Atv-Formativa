@@ -22,6 +22,13 @@ secOpcoes = {
 # Estrutura de listagem de estudantes
 estudantes = []
 
+## Teste
+estudante = {"codigo": 1, "nome": 1, "cpf": 1}
+estudantes.append(estudante)
+estudante = {"codigo": 2, "nome": 2, "cpf": 2}
+estudantes.append(estudante)
+estudante = {"codigo": 3, "nome": 3, "cpf": 3}
+estudantes.append(estudante)
 
 ## Main ##
 clear_console()
@@ -129,17 +136,56 @@ while True:
                     case 2:
                         if not estudantes:
                             print("A lista de estudantes está vazia.\n")
+                            input("Pressione ENTER para continuar...")
                         else:
                             print("Lista de estudantes:")
                             for estudante in estudantes:
                                 print(f"Código: {estudante['codigo']}, Nome: {estudante['nome']}, CPF: {estudante['cpf']}")
                         input("Pressione ENTER para retornar ao Menu...")
+                    #Editar    
                     case 3:
                         print("----- EM DESENVOLVIMENTO -----")
                         break
+                    #Excluir
                     case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
+                        #Verifica se a lista de Estudantes esta vazia
+                        if not estudantes:
+                            print("A lista de estudantes está vazia.\n")
+                            input("Pressione ENTER para continuar...")
+                            clear_console()
+                        else:
+                            while True:
+                                try:
+                                    #Insira o codigo do estudante a ser excluido
+                                    codigo_exclusao = int(input("Insira o Codigo do Estudante que será excluído: "))
+
+                                    # Procura o estudante com o código informado
+                                    estudante_encontrado = None
+                                    for estudante in estudantes:
+                                        if estudante["codigo"] == codigo_exclusao:
+                                            estudante_encontrado = estudante
+                                            break
+
+                                    if estudante_encontrado:
+                                        estudantes.remove(estudante_encontrado)
+                                        print(f"*** Estudante com código {codigo_exclusao} excluído com sucesso! ***")
+                                        input("Pressione ENTER para continuar...")
+                                        clear_console()
+                                        break 
+                                    else:
+                                        #Informa caso nao tenha o estudante com o codigo informado
+                                        clear_console()
+                                        print(f"*** Nenhum estudante encontrado com o código {codigo_exclusao}. ***")
+                                        input("Pressione ENTER para continuar...")
+                                        clear_console()
+                                        print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+
+                                #Trata o erro caso o usuario nao informe um int
+                                except ValueError:
+                                    print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
+                                    input("Pressione ENTER para continuar...")
+                                    clear_console()
+                                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
             case 2 :
                 match secTipo:
                     case 1:
