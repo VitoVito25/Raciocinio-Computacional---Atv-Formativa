@@ -194,22 +194,43 @@ def recuperarTodosDadosEmMemoria():
     for gerTipo in gerConfig:
         recuperarDadosEmMemoria(gerTipo)
 
-def salvarDados():
+def salvarDados(gerTipo):
     """
-        Função para salvar dados do array para o arquivo
+    Função para salvar os dados de um array em seu respectivo arquivo JSON.
     """
-    global estudantes  # Usa o array global estudantes
 
-    # Define o caminho do arquivo
-    caminho_arquivo = os.path.join("Arquivos", "estudantes.json")
+    # Mapeia o tipo de dado para o nome correspondente no dicionário
+    nome_dado = gerConfig.get(gerTipo)
 
-    # Salva os dados do array 'estudantes[]' no arquivo JSON (sobrescreve o arquivo)
+    # Verifica se o tipo é válido
+    if gerTipo not in gerConfig:
+        print("Tipo inválido! Escolha uma opção válida.")
+        return
+
+    # Usa o array global correspondente ao tipo de dado
+    global estudantes, professores, disciplinas, turmas, matriculas
+    # Mapeia os arrays de dados para os tipos correspondentes
+    arrays_dados = {
+        1: estudantes,
+        2: professores,
+        3: disciplinas,
+        4: turmas,
+        5: matriculas
+    }
+
+    # Pega os dados corretos para salvar
+    dados_para_salvar = arrays_dados.get(gerTipo)
+
+    # Define o caminho do arquivo para salvar
+    caminho_arquivo = os.path.join("Arquivos", f"{nome_dado}.json")
+
+    # Salva os dados no arquivo JSON correspondente
     try:
         with open(caminho_arquivo, 'w', encoding='utf-8') as arquivo_json:
-            json.dump(estudantes, arquivo_json, ensure_ascii=False, indent=4)
-        print("Dados dos estudantes salvos com sucesso!")
+            json.dump(dados_para_salvar, arquivo_json, ensure_ascii=False, indent=4)
+        print(f"Dados de {nome_dado} salvos com sucesso!")
     except Exception as e:
-        print(f"Erro ao salvar os dados: {e}")
+        print(f"Erro ao salvar os dados de {nome_dado}: {e}")
 
 def incluirEstudantes():
     """
@@ -227,7 +248,7 @@ def incluirEstudantes():
     clear_console()
     print(f"Código: {codigo}, Nome: {nome}, CPF: {cpf}")
     print("*** Estudante inserido com Sucesso! ***")
-    salvarDados()
+    salvarDados(1)
     input("Pressione ENTER para continuar...")
     clear_console()
 
@@ -326,7 +347,7 @@ def alterarEstudantes(gerDesc, secDesc):
                     print(f"Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
 
                     print(f"\n*** Estudante com código {codigo_edicao} atualizado com sucesso! ***")
-                    salvarDados()
+                    salvarDados(1)
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break
@@ -377,7 +398,7 @@ def excluirEstudantes(gerDesc, secDesc):
                     clear_console()
                     estudantes.remove(estudante_encontrado)
                     print(f"*** Estudante com código {codigo_exclusao} excluído com sucesso! ***")
-                    salvarDados()
+                    salvarDados(1)
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break 
