@@ -1,4 +1,6 @@
 from utils import clear_console
+import json
+import os
 
 # Dicionário para mapear opções a descrições do menu principal
 gerOpcoes = {
@@ -21,6 +23,12 @@ secOpcoes = {
 
 # Estrutura de listagem de estudantes
 estudantes = []
+
+def inicio():
+    print("----- SISTEMA DE GERENCIAMENTO DE FACULDADE -----")
+    recuperarEstudantesEmMemoria()
+    input("Pressione ENTER para continuar...")
+    clear_console()
 
 def menuPrincipal():
     """
@@ -114,6 +122,53 @@ def menuSecundario(gerDesc):
         
     return secTipo, secDesc
 
+#def identificarArquivoEstudantes(): 
+
+def recuperarEstudantesEmMemoria():
+    """
+        Função para recuperar estudantes ja salvos em arquivo
+    """
+    try:
+        # Caminho do arquivo
+        caminho_arquivo = os.path.join("Arquivos", "estudantes.json")
+
+        # Verifica se o arquivo existe
+        if not os.path.exists(caminho_arquivo):
+            print("Sem estudantes recuperados: arquivo 'estudantes.json' não encontrado.")
+            return
+        
+        # Abre e lê o conteúdo do arquivo
+        with open(caminho_arquivo, 'r') as arquivo:
+            conteudo = arquivo.read()
+
+            # Verifica se o arquivo está vazio
+            if not conteudo:
+                print("Sem estudantes recuperados: o arquivo está vazio.")
+            else:
+                global estudantes
+                estudantes = json.loads(conteudo)  # Carrega os dados no array estudantes
+                print("Estudantes recuperados com sucesso!")
+    
+    except Exception as e:
+        print(f"Erro na recuperação dos estudantes: {e}")
+
+def salvarEstudantes():
+    """
+        Função para salvar estudantes do array para o arquivo
+    """
+    global estudantes  # Usa o array global estudantes
+
+    # Define o caminho do arquivo
+    caminho_arquivo = os.path.join("Arquivos", "estudantes.json")
+
+    # Salva os dados do array 'estudantes[]' no arquivo JSON (sobrescreve o arquivo)
+    try:
+        with open(caminho_arquivo, 'w', encoding='utf-8') as arquivo_json:
+            json.dump(estudantes, arquivo_json, ensure_ascii=False, indent=4)
+        print("Dados dos estudantes salvos com sucesso!")
+    except Exception as e:
+        print(f"Erro ao salvar os dados: {e}")
+
 def incluirEstudantes():
     """
         Função para incluir estudantes
@@ -130,7 +185,9 @@ def incluirEstudantes():
     clear_console()
     print(f"Código: {codigo}, Nome: {nome}, CPF: {cpf}")
     print("*** Estudante inserido com Sucesso! ***")
+    salvarEstudantes()
     input("Pressione ENTER para continuar...")
+    clear_console()
 
 def listarEstudantes():
     """

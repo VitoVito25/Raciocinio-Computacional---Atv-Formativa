@@ -13,6 +13,8 @@ estudantes.append(estudante)
 
 ## Main App ##
 clear_console()
+inicio()
+
 while True:
 
     #Chama o menu principal e obtem o numero e descritivo do menu selecionado
