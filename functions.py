@@ -21,12 +21,25 @@ secOpcoes = {
     9: "Voltar ao menu principal"
 }
 
-# Estrutura de listagem de estudantes
+# Dicionário para mapear opções de configuração e nome dos arquivos
+gerConfig = {
+    1: "estudantes",
+    2: "professores",
+    3: "disciplinas",
+    4: "turmas",
+    5: "matriculas"
+}
+
+# Estrutura de listagem de dados
 estudantes = []
+professores = []
+disciplinas = []
+turmas = []
+matriculas = []
 
 def inicio():
     print("----- SISTEMA DE GERENCIAMENTO DE FACULDADE -----")
-    recuperarEstudantesEmMemoria()
+    recuperarTodosDadosEmMemoria()
     input("Pressione ENTER para continuar...")
     clear_console()
 
@@ -122,39 +135,68 @@ def menuSecundario(gerDesc):
         
     return secTipo, secDesc
 
-#def identificarArquivoEstudantes(): 
-
-def recuperarEstudantesEmMemoria():
+def recuperarDadosEmMemoria(gerTipo):
     """
-        Função para recuperar estudantes ja salvos em arquivo
+    Função para recuperar dados já salvos em arquivos.
+
+    :param: Int para a identificação de qual o menu selecionado
     """
     try:
-        # Caminho do arquivo
-        caminho_arquivo = os.path.join("Arquivos", "estudantes.json")
+        # Verifica se o tipo é válido
+        if gerTipo not in gerConfig:
+            print("Tipo inválido! Escolha uma opção válida.")
+            return
+
+        # Define o nome do arquivo com base no tipo
+        nome_arquivo = gerConfig[gerTipo] + ".json"
+        caminho_arquivo = os.path.join("Arquivos", nome_arquivo)
 
         # Verifica se o arquivo existe
         if not os.path.exists(caminho_arquivo):
-            print("Sem estudantes recuperados: arquivo 'estudantes.json' não encontrado.")
+            print(f"Sem {gerConfig[gerTipo]} recuperados: arquivo '{nome_arquivo}' não encontrado.")
             return
-        
+
         # Abre e lê o conteúdo do arquivo
-        with open(caminho_arquivo, 'r') as arquivo:
+        with open(caminho_arquivo, 'r', encoding='utf-8') as arquivo:
             conteudo = arquivo.read()
 
             # Verifica se o arquivo está vazio
             if not conteudo:
-                print("Sem estudantes recuperados: o arquivo está vazio.")
+                print(f"Sem {gerConfig[gerTipo]} recuperados: o arquivo está vazio.")
             else:
-                global estudantes
-                estudantes = json.loads(conteudo)  # Carrega os dados no array estudantes
-                print("Estudantes recuperados com sucesso!")
-    
-    except Exception as e:
-        print(f"Erro na recuperação dos estudantes: {e}")
+                # Carrega os dados no array correspondente com base no tipo
+                if gerTipo == 1:
+                    global estudantes
+                    estudantes = json.loads(conteudo)
+                elif gerTipo == 2:
+                    global professores
+                    professores = json.loads(conteudo)
+                elif gerTipo == 3:
+                    global disciplinas
+                    disciplinas = json.loads(conteudo)
+                elif gerTipo == 4:
+                    global turmas
+                    turmas = json.loads(conteudo)
+                elif gerTipo == 5:
+                    global matriculas
+                    matriculas = json.loads(conteudo)
+                
+                print(f"{gerConfig[gerTipo].capitalize()} recuperados com sucesso!")
 
-def salvarEstudantes():
+    except Exception as e:
+        print(f"Erro na recuperação dos {gerConfig[gerTipo]}: {e}")
+
+def recuperarTodosDadosEmMemoria(): 
     """
-        Função para salvar estudantes do array para o arquivo
+    Função para recuperar TODOS os dados já salvos em arquivos.
+    """
+
+    for gerTipo in gerConfig:
+        recuperarDadosEmMemoria(gerTipo)
+
+def salvarDados():
+    """
+        Função para salvar dados do array para o arquivo
     """
     global estudantes  # Usa o array global estudantes
 
@@ -185,7 +227,7 @@ def incluirEstudantes():
     clear_console()
     print(f"Código: {codigo}, Nome: {nome}, CPF: {cpf}")
     print("*** Estudante inserido com Sucesso! ***")
-    salvarEstudantes()
+    salvarDados()
     input("Pressione ENTER para continuar...")
     clear_console()
 
@@ -284,7 +326,7 @@ def alterarEstudantes(gerDesc, secDesc):
                     print(f"Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
 
                     print(f"\n*** Estudante com código {codigo_edicao} atualizado com sucesso! ***")
-                    salvarEstudantes()
+                    salvarDados()
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break
@@ -335,7 +377,7 @@ def excluirEstudantes(gerDesc, secDesc):
                     clear_console()
                     estudantes.remove(estudante_encontrado)
                     print(f"*** Estudante com código {codigo_exclusao} excluído com sucesso! ***")
-                    salvarEstudantes()
+                    salvarDados()
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break 
