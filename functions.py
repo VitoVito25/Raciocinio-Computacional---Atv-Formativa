@@ -284,6 +284,7 @@ def alterarEstudantes(gerDesc, secDesc):
                     print(f"Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
 
                     print(f"\n*** Estudante com código {codigo_edicao} atualizado com sucesso! ***")
+                    salvarEstudantes()
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break
@@ -334,6 +335,7 @@ def excluirEstudantes(gerDesc, secDesc):
                     clear_console()
                     estudantes.remove(estudante_encontrado)
                     print(f"*** Estudante com código {codigo_exclusao} excluído com sucesso! ***")
+                    salvarEstudantes()
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break 
