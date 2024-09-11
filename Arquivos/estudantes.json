@@ -2,16 +2,16 @@
     {
         "codigo": 1,
         "nome": "Victor",
-        "cpf": "Aa"
+        "cpf": "4646"
     },
     {
         "codigo": 2,
         "nome": "Davi",
-        "cpf": "06661862947"
+        "cpf": "123"
     },
     {
         "codigo": 3,
-        "nome": "Teste",
-        "cpf": "55"
+        "nome": "Vini",
+        "cpf": "787878"
     }
 ]

@@ -43,7 +43,7 @@ while True:
             case 1 : 
                 match secTipo:
                     case 1:
-                        incluirEstudantes()   
+                        incluirDados(gerTipo)   
                     case 2:
                         listarEstudantes()    
                     case 3:

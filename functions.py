@@ -37,6 +37,15 @@ disciplinas = []
 turmas = []
 matriculas = []
 
+# Mapeia os arrays de dados para os tipos correspondentes
+arrays_dados = {
+    1: estudantes,
+    2: professores,
+    3: disciplinas,
+    4: turmas,
+    5: matriculas
+}
+
 def inicio():
     print("----- SISTEMA DE GERENCIAMENTO DE FACULDADE -----")
     recuperarTodosDadosEmMemoria()
@@ -141,6 +150,9 @@ def recuperarDadosEmMemoria(gerTipo):
 
     :param: Int para a identificação de qual o menu selecionado
     """
+    
+    global arrays_dados
+
     try:
         # Verifica se o tipo é válido
         if gerTipo not in gerConfig:
@@ -165,21 +177,7 @@ def recuperarDadosEmMemoria(gerTipo):
                 print(f"Sem {gerConfig[gerTipo]} recuperados: o arquivo está vazio.")
             else:
                 # Carrega os dados no array correspondente com base no tipo
-                if gerTipo == 1:
-                    global estudantes
-                    estudantes = json.loads(conteudo)
-                elif gerTipo == 2:
-                    global professores
-                    professores = json.loads(conteudo)
-                elif gerTipo == 3:
-                    global disciplinas
-                    disciplinas = json.loads(conteudo)
-                elif gerTipo == 4:
-                    global turmas
-                    turmas = json.loads(conteudo)
-                elif gerTipo == 5:
-                    global matriculas
-                    matriculas = json.loads(conteudo)
+                arrays_dados[gerTipo] = json.loads(conteudo)
                 
                 print(f"{gerConfig[gerTipo].capitalize()} recuperados com sucesso!")
 
@@ -207,17 +205,6 @@ def salvarDados(gerTipo):
         print("Tipo inválido! Escolha uma opção válida.")
         return
 
-    # Usa o array global correspondente ao tipo de dado
-    global estudantes, professores, disciplinas, turmas, matriculas
-    # Mapeia os arrays de dados para os tipos correspondentes
-    arrays_dados = {
-        1: estudantes,
-        2: professores,
-        3: disciplinas,
-        4: turmas,
-        5: matriculas
-    }
-
     # Pega os dados corretos para salvar
     dados_para_salvar = arrays_dados.get(gerTipo)
 
@@ -232,23 +219,80 @@ def salvarDados(gerTipo):
     except Exception as e:
         print(f"Erro ao salvar os dados de {nome_dado}: {e}")
 
-def incluirEstudantes():
+def gerarCodigoUnico(gerTipo):
     """
-        Função para incluir estudantes
-
-        :param: Não é necessario a inclusão de parametros
-        :return: Não retorna dados
+    Função para gerar um código único para o tipo de dado especificado.
+    O código será o próximo número inteiro disponível com base no maior código existente.
+    
+    :param gerTipo: Tipo de dado para o qual o código está sendo gerado.
+    :return: Código único (número inteiro)
     """
-    nome = input("Insira o nome do estudante: ")
-    cpf = input("Insira o CPF do estudante: ")
-    codigo = len(estudantes) + 1  # Gera um código sequencial para o estudante
-    estudante = {"codigo": codigo, "nome": nome, "cpf": cpf}
-    estudantes.append(estudante)
+    dados = arrays_dados.get(gerTipo, [])
 
+    if dados:
+        # Encontra o maior código existente e adiciona 1
+        maior_codigo = max(item["codigo"] for item in dados)
+        return maior_codigo + 1
+    else:
+        # Se não houver dados, começa com o código 1
+        return 1
+    
+def incluirDados(gerTipo):
+    """
+    Função para incluir dados (estudantes, professores, disciplinas, turmas, matrículas).
+
+    :param gerTipo: Tipo de dado a ser incluído
+    :return: Não retorna dados
+    """
+
+    global arrays_dados 
+    
+    # Mapeia o tipo de dado para o nome correspondente no dicionário
+    nome_dado = gerConfig.get(gerTipo)
+
+    if gerTipo == 1:  # Estudantes
+        nome = input("Insira o nome do estudante: ")
+        cpf = input("Insira o CPF do estudante: ")
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para o estudante
+        dado = {"codigo": codigo, "nome": nome, "cpf": cpf}
+
+    elif gerTipo == 2:  # Professores
+        nome = input("Insira o nome do professor: ")
+        cpf = input("Insira o CPF do professor: ")
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para o professor
+        dado = {"codigo": codigo, "nome": nome, "cpf": cpf}
+
+    elif gerTipo == 3:  # Disciplinas
+        nome = input("Insira o nome da disciplina: ")
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para a disciplina
+        dado = {"codigo": codigo, "nome": nome}
+
+    elif gerTipo == 4:  # Turmas
+        codigo_professor = int(input("Insira o código do professor: "))
+        codigo_disciplina = int(input("Insira o código da disciplina: "))
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para a turma
+        dado = {"codigo": codigo, "codigo_professor": codigo_professor, "codigo_disciplina": codigo_disciplina}
+
+    elif gerTipo == 5:  # Matrículas
+        codigo_turma = int(input("Insira o código da turma: "))
+        codigo_estudante = int(input("Insira o código do estudante: "))
+        dado = {"codigo_turma": codigo_turma, "codigo_estudante": codigo_estudante}
+
+    else:
+        print("Tipo inválido! Escolha uma opção válida.")
+        return
+
+    # Adiciona o novo dado ao array correspondente
+    arrays_dados[gerTipo].append(dado)
+
+    # Limpa a tela e exibe a confirmação
     clear_console()
-    print(f"Código: {codigo}, Nome: {nome}, CPF: {cpf}")
-    print("*** Estudante inserido com Sucesso! ***")
-    salvarDados(1)
+    print(f"*** {nome_dado.capitalize()} inserido com Sucesso! ***")
+    print(dado)
+
+    # Salva os dados no arquivo correspondente
+    salvarDados(gerTipo)
+
     input("Pressione ENTER para continuar...")
     clear_console()
 
