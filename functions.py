@@ -47,6 +47,13 @@ arrays_dados = {
 }
 
 def inicio():
+    """
+        Função para chamar inicio do programa e visualizar se temos dados recuperados
+
+        :param: Não é necessario a inclusão de parametros
+        :return: Não retorna valores
+    """
+
     print("----- SISTEMA DE GERENCIAMENTO DE FACULDADE -----")
     recuperarTodosDadosEmMemoria()
     input("Pressione ENTER para continuar...")
@@ -296,19 +303,43 @@ def incluirDados(gerTipo):
     input("Pressione ENTER para continuar...")
     clear_console()
 
-def listarEstudantes():
+def listarDados(gerTipo):
     """
-        Função para listar estudantes
-
-        :param: Não é necessario a inclusão de parametros
+        Função para listar dados (estudantes, professores, disciplinas, turmas, matrículas).
+        
+        :param gerTipo: Tipo de dado a ser listado
         :return: Não retorna dados
     """
-    if not estudantes:
-        print("A lista de estudantes está vazia.\n")
+    global arrays_dados
+    
+    # Mapeia o tipo de dado para o nome correspondente no dicionário
+    nome_dado = gerConfig.get(gerTipo)
+
+    if not arrays_dados[gerTipo]:
+        print(f"A lista de {nome_dado} está vazia.\n")
     else:
-        print("Lista de estudantes:")
-        for estudante in estudantes:
-            print(f"Código: {estudante['codigo']}, Nome: {estudante['nome']}, CPF: {estudante['cpf']}")
+        print(f"Lista de {nome_dado}:")
+        
+        # Estudantes ou Professores (mesma estrutura: nome, cpf)
+        if gerTipo in [1, 2]:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código: {dado['codigo']}, Nome: {dado['nome']}, CPF: {dado['cpf']}")
+        
+        # Disciplinas (apenas nome)
+        elif gerTipo == 3:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código: {dado['codigo']}, Nome: {dado['nome']}")
+        
+        # Turmas (código do professor e da disciplina)
+        elif gerTipo == 4:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código: {dado['codigo']}, Código Professor: {dado['codigo_professor']}, Código Disciplina: {dado['codigo_disciplina']}")
+        
+        # Matrículas (código da turma e do estudante)
+        elif gerTipo == 5:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código Turma: {dado['codigo_turma']}, Código Estudante: {dado['codigo_estudante']}")
+    
     input("Pressione ENTER para retornar ao Menu...")
     clear_console()
 
@@ -410,7 +441,6 @@ def alterarEstudantes(gerDesc, secDesc):
                 input("Pressione ENTER para continuar...")
                 clear_console()
                 print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
-
 
 def excluirEstudantes(gerDesc, secDesc):
     """

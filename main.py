@@ -45,7 +45,7 @@ while True:
                     case 1:
                         incluirDados(gerTipo)   
                     case 2:
-                        listarEstudantes()    
+                        listarDados(gerTipo)    
                     case 3:
                         alterarEstudantes(gerDesc, secDesc)
                     case 4:
