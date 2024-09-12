@@ -38,70 +38,12 @@ while True:
         clear_console()
         print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
 
-        match gerTipo:
-            #Estudantes
-            case 1 : 
-                match secTipo:
-                    case 1:
-                        incluirDados(gerTipo)   
-                    case 2:
-                        listarDados(gerTipo)    
-                    case 3:
-                        alterarEstudantes(gerDesc, secDesc)
-                    case 4:
-                        excluirEstudantes(gerDesc, secDesc)
-            case 2 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break        
-            case 3 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-            case 4 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break            
-            case 5 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
+        match secTipo:
+            case 1:
+                incluirDados(gerTipo)   
+            case 2:
+                listarDados(gerTipo)    
+            case 3:
+                alterarEstudantes(gerDesc, secDesc)
+            case 4:
+                excluirEstudantes(gerDesc, secDesc)

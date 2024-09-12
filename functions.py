@@ -275,8 +275,28 @@ def incluirDados(gerTipo):
         dado = {"codigo": codigo, "nome": nome}
 
     elif gerTipo == 4:  # Turmas
-        codigo_professor = int(input("Insira o código do professor: "))
-        codigo_disciplina = int(input("Insira o código da disciplina: "))
+        # Validação do código do professor
+        while True:
+            try:
+                codigo_professor = int(input("Insira o código do professor: "))
+                if not any(dado['codigo'] == codigo_professor for dado in arrays_dados[2]):
+                    print("Código do professor não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
+        # Validação do código da disciplina
+        while True:
+            try:
+                codigo_disciplina = int(input("Insira o código da disciplina: "))
+                if not any(dado['codigo'] == codigo_disciplina for dado in arrays_dados[3]):
+                    print("Código da disciplina não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
         codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para a turma
         dado = {"codigo": codigo, "codigo_professor": codigo_professor, "codigo_disciplina": codigo_disciplina}
 
