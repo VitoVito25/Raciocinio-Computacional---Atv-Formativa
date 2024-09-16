@@ -5,18 +5,13 @@
         "cpf": "4646"
     },
     {
-        "codigo": 2,
-        "nome": "Davi",
-        "cpf": "123"
-    },
-    {
-        "codigo": 3,
-        "nome": "Vini",
-        "cpf": "787878"
-    },
-    {
         "codigo": 4,
         "nome": "Viniii",
         "cpf": "123"
+    },
+    {
+        "codigo": 5,
+        "nome": "Davi dnovo",
+        "cpf": "0664555"
     }
 ]

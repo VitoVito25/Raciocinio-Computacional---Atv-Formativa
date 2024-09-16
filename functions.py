@@ -481,51 +481,56 @@ def alterarEstudantes(gerDesc, secDesc):
                 clear_console()
                 print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
 
-def excluirEstudantes(gerDesc, secDesc):
+def excluirDados(gerTipo, secDesc):
     """
-        Função para excluir estudantes
+    Função para excluir dados (estudantes, professores, disciplinas, turmas, matrículas).
 
-        :param gerDesc: Descritivo do menu principal
-        :param secDesc: Descritivo do menu secundario
-        :return: Não retorna dados
+    :param gerTipo: Tipo de dado a ser excluído
+    :param secDesc: Descritivo do menu secundário
+    :return: Não retorna dados
     """
-    #Verifica se a lista de Estudantes esta vazia
-    if not estudantes:
-        print("A lista de estudantes está vazia.\n")
+    global arrays_dados
+
+    # Recupera o nome descritivo do tipo de dado a partir de gerOpcoes
+    nome_dado = gerOpcoes.get(gerTipo)
+
+    # Verifica se a lista correspondente ao tipo de dado está vazia
+    if not arrays_dados[gerTipo]:
+        print(f"A lista de {nome_dado} está vazia.\n")
         input("Pressione ENTER para continuar...")
         clear_console()
     else:
         while True:
             try:
-                #Insira o codigo do estudante a ser excluido
-                codigo_exclusao = int(input("Insira o Codigo do Estudante que será excluído: "))
+                # Solicita o código do dado a ser excluído
+                codigo_exclusao = int(input(f"Insira o código do(a) {nome_dado} que será excluído(a): "))
 
-                # Procura o estudante com o código informado
-                estudante_encontrado = None
-                for estudante in estudantes:
-                    if estudante["codigo"] == codigo_exclusao:
-                        estudante_encontrado = estudante
+                # Procura o dado com o código informado
+                dado_encontrado = None
+                for dado in arrays_dados[gerTipo]:
+                    if dado["codigo"] == codigo_exclusao:
+                        dado_encontrado = dado
                         break
 
-                if estudante_encontrado:
+                if dado_encontrado:
                     clear_console()
-                    estudantes.remove(estudante_encontrado)
-                    print(f"*** Estudante com código {codigo_exclusao} excluído com sucesso! ***")
-                    salvarDados(1)
+                    arrays_dados[gerTipo].remove(dado_encontrado)
+                    print(f"*** {nome_dado.capitalize()} com código {codigo_exclusao} excluído com sucesso! ***")
+                    salvarDados(gerTipo)
                     input("Pressione ENTER para continuar...")
                     clear_console()
-                    break 
+                    break
                 else:
-                    #Informa caso nao tenha o estudante com o codigo informado
+                    # Informa caso não tenha o dado com o código informado
                     clear_console()
-                    print(f"*** Nenhum estudante encontrado com o código {codigo_exclusao}. ***")
+                    print(f"*** Nenhum(a) {nome_dado} encontrado(a) com o código {codigo_exclusao}. ***")
                     input("Pressione ENTER para continuar...")
                     clear_console()
-                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+                    print(f"----- {secDesc} {nome_dado} -----\n".upper())
 
-            #Trata o erro caso o usuario nao informe um int
+            # Trata o erro caso o usuário não informe um número inteiro
             except ValueError:
                 print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
                 input("Pressione ENTER para continuar...")
                 clear_console()
-                print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+                print(f"----- {secDesc} {nome_dado} -----\n".upper())

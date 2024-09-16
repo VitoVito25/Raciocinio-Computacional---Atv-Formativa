@@ -46,4 +46,4 @@ while True:
             case 3:
                 alterarEstudantes(gerDesc, secDesc)
             case 4:
-                excluirEstudantes(gerDesc, secDesc)
+                excluirDados(gerTipo, secDesc)
