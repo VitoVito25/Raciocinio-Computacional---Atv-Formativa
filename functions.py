@@ -106,7 +106,6 @@ def menuPrincipal():
 
     return gerTipo , gerDesc
 
-
 def menuSecundario(gerDesc):
     """
         Função para chamar o menu secundario
@@ -301,8 +300,28 @@ def incluirDados(gerTipo):
         dado = {"codigo": codigo, "codigo_professor": codigo_professor, "codigo_disciplina": codigo_disciplina}
 
     elif gerTipo == 5:  # Matrículas
-        codigo_turma = int(input("Insira o código da turma: "))
-        codigo_estudante = int(input("Insira o código do estudante: "))
+    # Validação do código da turma
+        while True:
+            try:
+                codigo_turma = int(input("Insira o código da turma: "))
+                if not any(dado['codigo'] == codigo_turma for dado in arrays_dados[4]):
+                    print("Código da turma não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
+        # Validação do código do estudante
+        while True:
+            try:
+                codigo_estudante = int(input("Insira o código do estudante: "))
+                if not any(dado['codigo'] == codigo_estudante for dado in arrays_dados[1]):
+                    print("Código do estudante não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
         dado = {"codigo_turma": codigo_turma, "codigo_estudante": codigo_estudante}
 
     else:
