@@ -2,7 +2,7 @@
     {
         "codigo": 1,
         "codigo_professor": 1,
-        "codigo_disciplina": 1
+        "codigo_disciplina": 2
     },
     {
         "codigo": 3,
@@ -10,8 +10,13 @@
         "codigo_disciplina": 2
     },
     {
-        "codigo": 4,
+        "codigo": 2,
         "codigo_professor": 1,
+        "codigo_disciplina": 1
+    },
+    {
+        "codigo": 4,
+        "codigo_professor": 2,
         "codigo_disciplina": 1
     }
 ]

@@ -526,9 +526,9 @@ def verificarCodigoExistente(gerTipo, codigo):
 
 def alterarCodigoSecundario(dado_com_campo, gerTipo, tipo_dado):
 
-    # Validação do código do professor
+    # Validação do código
     while True:
-        codigo = input(f"Insira o novo código do professor (ou ENTER para manter {dado_com_campo}): ")
+        codigo = input(f"Insira o novo código do {tipo_dado} (ou ENTER para manter {dado_com_campo}): ")
         
         if not codigo:  # Se o usuário apertar ENTER, mantém o código atual
             return dado_com_campo
