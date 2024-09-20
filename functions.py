@@ -382,7 +382,7 @@ def listarDados(gerTipo):
     input("Pressione ENTER para retornar ao Menu...")
     clear_console()
 
-def alterarDados(gerTipo, secDesc):
+def alterarDados(gerTipo):
     """
     Função genérica para alterar dados (estudantes, professores, disciplinas, turmas, matrículas).
 
@@ -415,9 +415,9 @@ def alterarDados(gerTipo, secDesc):
 
                     # Solicita atualização dos campos, dependendo do tipo de dado
                     if gerTipo in [1, 2]:  # Estudantes ou Professores (Nome e CPF)
-                        alterarNomeCpf(dado_encontrado, nome_dado)
+                        alterarNomeCpf(dado_encontrado, gerTipo, nome_dado)
                     elif gerTipo == 3:  # Disciplinas (Apenas Nome)
-                        alterarNome(dado_encontrado, nome_dado)
+                        alterarNome(dado_encontrado, gerTipo, nome_dado)
                     elif gerTipo == 4:  # Turmas (Professores e Disciplinas)
                         alterarTurma(dado_encontrado)
                     elif gerTipo == 5:  # Matrículas (Turmas)
@@ -464,6 +464,19 @@ def alterarNomeCpf(dado, gerTipo, tipo_dado):
         dado['nome'] = novo_nome
     if novo_cpf:
         dado['cpf'] = novo_cpf
+
+def alterarNome(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar nome de Disciplinas
+    """
+    # Altera o código
+    alterarCodigo(dado, gerTipo, tipo_dado)
+    
+    novo_nome = input(f"Insira o novo nome (ou pressione ENTER para manter '{dado['nome']}'): ")
+
+    if novo_nome:
+        dado['nome'] = novo_nome
+
 
 def alterarTurma(dado):
     """

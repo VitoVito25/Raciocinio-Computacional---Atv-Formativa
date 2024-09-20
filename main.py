@@ -34,6 +34,6 @@ while True:
             case 2:
                 listarDados(gerTipo)    
             case 3:
-                alterarDados(gerTipo, secDesc)
+                alterarDados(gerTipo)
             case 4:
                 excluirDados(gerTipo, secDesc)
