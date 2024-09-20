@@ -1,16 +1,6 @@
 from utils import clear_console
 from functions import *
 
-# Teste
-"""
-estudante = {"codigo": 1, "nome": 1, "cpf": 1}
-estudantes.append(estudante)
-estudante = {"codigo": 2, "nome": 2, "cpf": 2}
-estudantes.append(estudante)
-estudante = {"codigo": 3, "nome": 3, "cpf": 3}
-estudantes.append(estudante)
-"""
-
 ## Main App ##
 clear_console()
 inicio()
@@ -38,70 +28,12 @@ while True:
         clear_console()
         print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
 
-        match gerTipo:
-            #Estudantes
-            case 1 : 
-                match secTipo:
-                    case 1:
-                        incluirEstudantes()   
-                    case 2:
-                        listarEstudantes()    
-                    case 3:
-                        alterarEstudantes(gerDesc, secDesc)
-                    case 4:
-                        excluirEstudantes(gerDesc, secDesc)
-            case 2 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break        
-            case 3 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-            case 4 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break            
-            case 5 :
-                match secTipo:
-                    case 1:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 2:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 3:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
-                    case 4:
-                        print("----- EM DESENVOLVIMENTO -----")
-                        break
+        match secTipo:
+            case 1:
+                incluirDados(gerTipo)   
+            case 2:
+                listarDados(gerTipo)    
+            case 3:
+                alterarDados(gerTipo)
+            case 4:
+                excluirDados(gerTipo, secDesc)

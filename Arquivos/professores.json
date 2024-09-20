@@ -1,0 +1,12 @@
+[
+    {
+        "codigo": 1,
+        "nome": "Marcia",
+        "cpf": "123456"
+    },
+    {
+        "codigo": 2,
+        "nome": "Kaio",
+        "cpf": "456456"
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "codigo": 1,
+        "codigo_turma": 2,
+        "codigo_estudante": 1
+    },
+    {
+        "codigo": 2,
+        "codigo_turma": 2,
+        "codigo_estudante": 2
+    }
+]

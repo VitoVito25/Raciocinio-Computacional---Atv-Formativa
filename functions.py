@@ -21,12 +21,41 @@ secOpcoes = {
     9: "Voltar ao menu principal"
 }
 
-# Estrutura de listagem de estudantes
+# Dicionário para mapear opções de configuração e nome dos arquivos
+gerConfig = {
+    1: "estudantes",
+    2: "professores",
+    3: "disciplinas",
+    4: "turmas",
+    5: "matriculas"
+}
+
+# Estrutura de listagem de dados
 estudantes = []
+professores = []
+disciplinas = []
+turmas = []
+matriculas = []
+
+# Mapeia os arrays de dados para os tipos correspondentes
+arrays_dados = {
+    1: estudantes,
+    2: professores,
+    3: disciplinas,
+    4: turmas,
+    5: matriculas
+}
 
 def inicio():
+    """
+        Função para chamar inicio do programa e visualizar se temos dados recuperados
+
+        :param: Não é necessario a inclusão de parametros
+        :return: Não retorna valores
+    """
+
     print("----- SISTEMA DE GERENCIAMENTO DE FACULDADE -----")
-    recuperarEstudantesEmMemoria()
+    recuperarTodosDadosEmMemoria()
     input("Pressione ENTER para continuar...")
     clear_console()
 
@@ -77,7 +106,6 @@ def menuPrincipal():
 
     return gerTipo , gerDesc
 
-
 def menuSecundario(gerDesc):
     """
         Função para chamar o menu secundario
@@ -122,234 +150,505 @@ def menuSecundario(gerDesc):
         
     return secTipo, secDesc
 
-#def identificarArquivoEstudantes(): 
+def recuperarDadosEmMemoria(gerTipo):
+    """
+    Função para recuperar dados já salvos em arquivos.
 
-def recuperarEstudantesEmMemoria():
+    :param: Int para a identificação de qual o menu selecionado
     """
-        Função para recuperar estudantes ja salvos em arquivo
-    """
+    
+    global arrays_dados
+
     try:
-        # Caminho do arquivo
-        caminho_arquivo = os.path.join("Arquivos", "estudantes.json")
+        # Verifica se o tipo é válido
+        if gerTipo not in gerConfig:
+            print("Tipo inválido! Escolha uma opção válida.")
+            return
+
+        # Define o nome do arquivo com base no tipo
+        nome_arquivo = gerConfig[gerTipo] + ".json"
+        caminho_arquivo = os.path.join("Arquivos", nome_arquivo)
 
         # Verifica se o arquivo existe
         if not os.path.exists(caminho_arquivo):
-            print("Sem estudantes recuperados: arquivo 'estudantes.json' não encontrado.")
+            print(f"Sem {gerConfig[gerTipo]} recuperados: arquivo '{nome_arquivo}' não encontrado.")
             return
-        
+
         # Abre e lê o conteúdo do arquivo
-        with open(caminho_arquivo, 'r') as arquivo:
+        with open(caminho_arquivo, 'r', encoding='utf-8') as arquivo:
             conteudo = arquivo.read()
 
             # Verifica se o arquivo está vazio
             if not conteudo:
-                print("Sem estudantes recuperados: o arquivo está vazio.")
+                print(f"Sem {gerConfig[gerTipo]} recuperados: o arquivo está vazio.")
             else:
-                global estudantes
-                estudantes = json.loads(conteudo)  # Carrega os dados no array estudantes
-                print("Estudantes recuperados com sucesso!")
-    
+                # Carrega os dados no array correspondente com base no tipo
+                arrays_dados[gerTipo] = json.loads(conteudo)
+                
+                print(f"{gerConfig[gerTipo].capitalize()} recuperados com sucesso!")
+
     except Exception as e:
-        print(f"Erro na recuperação dos estudantes: {e}")
+        print(f"Erro na recuperação dos {gerConfig[gerTipo]}: {e}")
 
-def salvarEstudantes():
+def recuperarTodosDadosEmMemoria(): 
     """
-        Função para salvar estudantes do array para o arquivo
+    Função para recuperar TODOS os dados já salvos em arquivos.
     """
-    global estudantes  # Usa o array global estudantes
 
-    # Define o caminho do arquivo
-    caminho_arquivo = os.path.join("Arquivos", "estudantes.json")
+    for gerTipo in gerConfig:
+        recuperarDadosEmMemoria(gerTipo)
 
-    # Salva os dados do array 'estudantes[]' no arquivo JSON (sobrescreve o arquivo)
+def salvarDados(gerTipo):
+    """
+    Função para salvar os dados de um array em seu respectivo arquivo JSON.
+    """
+
+    # Mapeia o tipo de dado para o nome correspondente no dicionário
+    nome_dado = gerConfig.get(gerTipo)
+
+    # Verifica se o tipo é válido
+    if gerTipo not in gerConfig:
+        print("Tipo inválido! Escolha uma opção válida.")
+        return
+
+    # Pega os dados corretos para salvar
+    dados_para_salvar = arrays_dados.get(gerTipo)
+
+    # Define o caminho do arquivo para salvar
+    caminho_arquivo = os.path.join("Arquivos", f"{nome_dado}.json")
+
+    # Salva os dados no arquivo JSON correspondente
     try:
         with open(caminho_arquivo, 'w', encoding='utf-8') as arquivo_json:
-            json.dump(estudantes, arquivo_json, ensure_ascii=False, indent=4)
-        print("Dados dos estudantes salvos com sucesso!")
+            json.dump(dados_para_salvar, arquivo_json, ensure_ascii=False, indent=4)
+        print(f"Dados de {nome_dado} salvos com sucesso!")
     except Exception as e:
-        print(f"Erro ao salvar os dados: {e}")
+        print(f"Erro ao salvar os dados de {nome_dado}: {e}")
 
-def incluirEstudantes():
+def gerarCodigoUnico(gerTipo):
     """
-        Função para incluir estudantes
-
-        :param: Não é necessario a inclusão de parametros
-        :return: Não retorna dados
+    Função para gerar um código único para o tipo de dado especificado.
+    O código será o próximo número inteiro disponível com base no maior código existente.
+    
+    :param gerTipo: Tipo de dado para o qual o código está sendo gerado.
+    :return: Código único (número inteiro)
     """
-    nome = input("Insira o nome do estudante: ")
-    cpf = input("Insira o CPF do estudante: ")
-    codigo = len(estudantes) + 1  # Gera um código sequencial para o estudante
-    estudante = {"codigo": codigo, "nome": nome, "cpf": cpf}
-    estudantes.append(estudante)
+    dados = arrays_dados.get(gerTipo, [])
 
+    if dados:
+        # Encontra o maior código existente e adiciona 1
+        maior_codigo = max(item["codigo"] for item in dados)
+        return maior_codigo + 1
+    else:
+        # Se não houver dados, começa com o código 1
+        return 1
+    
+def incluirDados(gerTipo):
+    """
+    Função para incluir dados (estudantes, professores, disciplinas, turmas, matrículas).
+
+    :param gerTipo: Tipo de dado a ser incluído
+    :return: Não retorna dados
+    """
+
+    global arrays_dados 
+    
+    # Mapeia o tipo de dado para o nome correspondente no dicionário
+    nome_dado = gerConfig.get(gerTipo)
+
+    if gerTipo == 1:  # Estudantes
+        nome = input("Insira o nome do estudante: ")
+        cpf = input("Insira o CPF do estudante: ")
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para o estudante
+        dado = {"codigo": codigo, "nome": nome, "cpf": cpf}
+
+    elif gerTipo == 2:  # Professores
+        nome = input("Insira o nome do professor: ")
+        cpf = input("Insira o CPF do professor: ")
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para o professor
+        dado = {"codigo": codigo, "nome": nome, "cpf": cpf}
+
+    elif gerTipo == 3:  # Disciplinas
+        nome = input("Insira o nome da disciplina: ")
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para a disciplina
+        dado = {"codigo": codigo, "nome": nome}
+
+    elif gerTipo == 4:  # Turmas
+        # Validação do código do professor
+        while True:
+            try:
+                codigo_professor = int(input("Insira o código do professor: "))
+                if not any(dado['codigo'] == codigo_professor for dado in arrays_dados[2]):
+                    print("Código do professor não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
+        # Validação do código da disciplina
+        while True:
+            try:
+                codigo_disciplina = int(input("Insira o código da disciplina: "))
+                if not any(dado['codigo'] == codigo_disciplina for dado in arrays_dados[3]):
+                    print("Código da disciplina não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para a turma
+        dado = {"codigo": codigo, "codigo_professor": codigo_professor, "codigo_disciplina": codigo_disciplina}
+
+    elif gerTipo == 5:  # Matrículas
+    # Validação do código da turma
+        while True:
+            try:
+                codigo_turma = int(input("Insira o código da turma: "))
+                if not any(dado['codigo'] == codigo_turma for dado in arrays_dados[4]):
+                    print("Código da turma não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
+        # Validação do código do estudante
+        while True:
+            try:
+                codigo_estudante = int(input("Insira o código do estudante: "))
+                if not any(dado['codigo'] == codigo_estudante for dado in arrays_dados[1]):
+                    print("Código do estudante não encontrado. Tente novamente.")
+                    continue
+                break
+            except ValueError:
+                print("Código inválido. Deve ser um número inteiro.")
+
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para a matricula
+        dado = {"codigo": codigo, "codigo_turma": codigo_turma, "codigo_estudante": codigo_estudante}
+
+    else:
+        print("Tipo inválido! Escolha uma opção válida.")
+        return
+
+    # Adiciona o novo dado ao array correspondente
+    arrays_dados[gerTipo].append(dado)
+
+    # Limpa a tela e exibe a confirmação
     clear_console()
-    print(f"Código: {codigo}, Nome: {nome}, CPF: {cpf}")
-    print("*** Estudante inserido com Sucesso! ***")
-    salvarEstudantes()
+    print(f"*** {nome_dado.capitalize()} inserido com Sucesso! ***")
+    print(dado)
+
+    # Salva os dados no arquivo correspondente
+    salvarDados(gerTipo)
+
     input("Pressione ENTER para continuar...")
     clear_console()
 
-def listarEstudantes():
+def listarDados(gerTipo):
     """
-        Função para listar estudantes
-
-        :param: Não é necessario a inclusão de parametros
+        Função para listar dados (estudantes, professores, disciplinas, turmas, matrículas).
+        
+        :param gerTipo: Tipo de dado a ser listado
         :return: Não retorna dados
     """
-    if not estudantes:
-        print("A lista de estudantes está vazia.\n")
+    global arrays_dados
+    
+    # Mapeia o tipo de dado para o nome correspondente no dicionário
+    nome_dado = gerConfig.get(gerTipo)
+
+    if not arrays_dados[gerTipo]:
+        print(f"A lista de {nome_dado} está vazia.\n")
     else:
-        print("Lista de estudantes:")
-        for estudante in estudantes:
-            print(f"Código: {estudante['codigo']}, Nome: {estudante['nome']}, CPF: {estudante['cpf']}")
+        print(f"Lista de {nome_dado}:")
+        
+        # Estudantes ou Professores (mesma estrutura: nome, cpf)
+        if gerTipo in [1, 2]:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código: {dado['codigo']}, Nome: {dado['nome']}, CPF: {dado['cpf']}")
+        
+        # Disciplinas (apenas nome)
+        elif gerTipo == 3:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código: {dado['codigo']}, Nome: {dado['nome']}")
+        
+        # Turmas (código do professor e da disciplina)
+        elif gerTipo == 4:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código: {dado['codigo']}, Código Professor: {dado['codigo_professor']}, Código Disciplina: {dado['codigo_disciplina']}")
+        
+        # Matrículas (código da turma e do estudante)
+        elif gerTipo == 5:
+            for dado in arrays_dados[gerTipo]:
+                print(f"Código Turma: {dado['codigo_turma']}, Código Estudante: {dado['codigo_estudante']}")
+    
     input("Pressione ENTER para retornar ao Menu...")
     clear_console()
 
-def alterarEstudantes(gerDesc, secDesc):
+def alterarDados(gerTipo):
     """
-        Função para alterar estudantes
+    Função genérica para alterar dados (estudantes, professores, disciplinas, turmas, matrículas).
 
-        :param gerDesc: Descritivo do menu principal
-        :param secDesc: Descritivo do menu secundario
-        :return: Não retorna dados
+    :param gerTipo: Tipo de dado a ser alterado (1-Estudantes, 2-Professores, 3-Disciplinas, 4-Turmas, 5-Matrículas)
+
+    :return: Não retorna dados
     """
+    global arrays_dados
 
-    # Verifica se a lista de estudantes está vazia
-    if not estudantes:
-        print("A lista de estudantes está vazia.\n")
+    # Recupera o nome descritivo do tipo de dado a partir de gerOpcoes
+    nome_dado = gerOpcoes.get(gerTipo)
+
+    # Verifica se a lista correspondente ao tipo de dado está vazia
+    if not arrays_dados[gerTipo]:
+        print(f"A lista de {nome_dado} está vazia.\n")
         input("Pressione ENTER para continuar...")
         clear_console()
     else:
         while True:
             try:
-                # Insira o código do estudante a ser editado
-                codigo_edicao = int(input("Insira o Código do Estudante que será editado: "))
+                # Insere o código do dado a ser editado
+                codigo_edicao = int(input(f"Insira o Código do(a) {nome_dado} que será editado(a): "))
 
-                # Procura o estudante com o código informado
-                estudante_encontrado = None
-                for estudante in estudantes:
-                    if estudante["codigo"] == codigo_edicao:
-                        estudante_encontrado = estudante
+                # Procura o dado com o código informado
+                dado_encontrado = buscarPorCodigo(gerTipo, codigo_edicao)
 
-                        # Armazena os dados antigos para comparação posterior
-                        dados_anteriores = estudante_encontrado.copy()
-                        break
-                
-                # Permite que o usuário atualize o nome, CPF e/ou código
-                if estudante_encontrado:
-                    while True:
-                        #Validacao do novo codigo
-                        try:
-                            print(f"Estudante encontrado: Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
-                            novo_codigo = input(f"Insira o novo código (ou pressione ENTER para manter '{estudante_encontrado['codigo']}'): ")
-                            
-                            if novo_codigo == "":  # Se o usuário pressionar ENTER, mantém o código atual
-                                break
-                            
-                            novo_codigo = int(novo_codigo)  # Tenta converter a entrada para inteiro
+                if dado_encontrado:
+                    # Armazena os dados antigos para comparação posterior
+                    dados_anteriores = dado_encontrado.copy()
 
-                            # Verifica se o novo código já está em uso
-                            codigo_existente = any(estudante['codigo'] == novo_codigo for estudante in estudantes)
-                            
-                            if codigo_existente:
-                                print(f"*** O código {novo_codigo} já está em uso. Por favor, escolha um código diferente. ***")
-                                input("Pressione ENTER para tentar novamente...")
-                                clear_console()
-                                print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
-                            else:
-                                estudante_encontrado['codigo'] = novo_codigo  # Atualiza o código do estudante
-                                break
-                            
-                        except ValueError:
-                            clear_console()
-                            print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
-                            input("Pressione ENTER para tentar novamente...")
-                            clear_console()
-                            print("----- {} {} -----\n".format(secDesc, gerDesc).upper())                                        
-                    
-                    # Solicita novos Nome e CPF ou mantém os atuais se o usuário não informar nada
-                    novo_nome = input(f"Insira o novo nome (ou pressione ENTER para manter '{estudante_encontrado['nome']}'): ")
-                    novo_cpf = input(f"Insira o novo CPF (ou pressione ENTER para manter '{estudante_encontrado['cpf']}'): ")
-
-                    if novo_nome:
-                        estudante_encontrado['nome'] = novo_nome
-                    if novo_cpf:
-                        estudante_encontrado['cpf'] = novo_cpf
+                    # Solicita atualização dos campos, dependendo do tipo de dado
+                    if gerTipo in [1, 2]:  # Estudantes ou Professores (Nome e CPF)
+                        alterarNomeCpf(dado_encontrado, gerTipo, nome_dado)
+                    elif gerTipo == 3:  # Disciplinas (Apenas Nome)
+                        alterarNome(dado_encontrado, gerTipo, nome_dado)
+                    elif gerTipo == 4:  # Turmas (Professores e Disciplinas)
+                        alterarTurma(dado_encontrado, gerTipo, nome_dado)
+                    elif gerTipo == 5:  # Matrículas (Turmas)
+                        alterarMatricula(dado_encontrado, gerTipo, nome_dado)
 
                     # Exibe os dados anteriores e os dados atualizados
                     clear_console()
                     print("\nDados anteriores:")
-                    print(f"Código: {dados_anteriores['codigo']}, Nome: {dados_anteriores['nome']}, CPF: {dados_anteriores['cpf']}")
-                    print("\nDados atualizados:")
-                    print(f"Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
+                    for chave, valor in dados_anteriores.items():
+                        print(f"{chave.capitalize()}: {valor}")
 
-                    print(f"\n*** Estudante com código {codigo_edicao} atualizado com sucesso! ***")
-                    salvarEstudantes()
+                    print("\nDados atualizados:")
+                    for chave, valor in dado_encontrado.items():
+                        print(f"{chave.capitalize()}: {valor}")
+
+                    print(f"\n*** {nome_dado.capitalize()} com código {codigo_edicao} atualizado com sucesso! ***")
+                    salvarDados(gerTipo)
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break
                 else:
-                    # Informa caso não tenha o estudante com o código informado
                     clear_console()
-                    print(f"*** Nenhum estudante encontrado com o código {codigo_edicao}. ***")
+                    print(f"*** Nenhum(a) {nome_dado} encontrado(a) com o código {codigo_edicao}. ***")
                     input("Pressione ENTER para continuar...")
                     clear_console()
-                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
 
-            # Trata o erro caso o usuário não informe um número inteiro
             except ValueError:
                 clear_console()
                 print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
                 input("Pressione ENTER para continuar...")
                 clear_console()
-                print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
 
-
-def excluirEstudantes(gerDesc, secDesc):
+def alterarNomeCpf(dado, gerTipo, tipo_dado):
     """
-        Função para excluir estudantes
+    Função para alterar nome e CPF de estudantes ou professores.
 
-        :param gerDesc: Descritivo do menu principal
-        :param secDesc: Descritivo do menu secundario
-        :return: Não retorna dados
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
     """
-    #Verifica se a lista de Estudantes esta vazia
-    if not estudantes:
-        print("A lista de estudantes está vazia.\n")
+
+    # Altera o código do estudante ou professor
+    alterarCodigo(dado, gerTipo, tipo_dado)
+    
+    novo_nome = input(f"Insira o novo nome (ou pressione ENTER para manter '{dado['nome']}'): ")
+    novo_cpf = input(f"Insira o novo CPF (ou pressione ENTER para manter '{dado['cpf']}'): ")
+
+    if novo_nome:
+        dado['nome'] = novo_nome
+    if novo_cpf:
+        dado['cpf'] = novo_cpf
+
+def alterarNome(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar nome de Disciplinas
+
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
+    """
+    # Altera o código
+    alterarCodigo(dado, gerTipo, tipo_dado)
+    
+    novo_nome = input(f"Insira o novo nome (ou pressione ENTER para manter '{dado['nome']}'): ")
+
+    if novo_nome:
+        dado['nome'] = novo_nome
+
+def alterarTurma(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar Turma
+
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
+    """
+    # Altera o código
+    alterarCodigo(dado, gerTipo, tipo_dado)
+
+    # Validação do código da disciplina
+    dado['codigo_professor'] = alterarCodigoSecundario(dado['codigo_professor'], 2, "professor")
+
+    # Validação do código da disciplina
+    dado['codigo_disciplina'] = alterarCodigoSecundario(dado['codigo_disciplina'], 3, "disciplina")
+
+def alterarMatricula(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar Matricula
+
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
+    """
+
+    # Altera o código
+    alterarCodigo(dado, gerTipo, tipo_dado)
+
+    # Validação do código da disciplina
+    dado['codigo_turma'] = alterarCodigoSecundario(dado['codigo_turma'], 4, "turma")
+
+    # Validação do código da disciplina
+    dado['codigo_estudante'] = alterarCodigoSecundario(dado['codigo_estudante'], 1, "estudante")
+
+def alterarCodigo(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar o código de qualquer tipo de dado (ex: matrícula, turma, professor).
+    
+    :param dado: O dado que será alterado (dicionário com chave 'codigo').
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados, apenas altera o código no dicionário 'dado' se validado.
+    """
+    novo_codigo = input(f"Insira o novo código do(a) {tipo_dado} (ou pressione ENTER para manter '{dado['codigo']}'): ")
+    
+    while novo_codigo:
+        try:
+            novo_codigo = int(novo_codigo)
+            if verificarCodigoExistente(gerTipo, novo_codigo):
+                print(f"Código já existente para {tipo_dado}! Tente novamente.")
+                novo_codigo = input(f"Insira o novo código do(a) {tipo_dado} (ou pressione ENTER para manter '{dado['codigo']}'): ")
+            else:
+                dado['codigo'] = novo_codigo
+                break
+        except ValueError:
+            print("Código inválido. Deve ser um número inteiro.")
+            novo_codigo = input(f"Insira o novo código do(a) {tipo_dado} (ou pressione ENTER para manter '{dado['codigo']}'): ")
+
+def verificarCodigoExistente(gerTipo, codigo):
+    """
+    Verifica se um código já está em uso no tipo de dado especificado.
+    
+    :param gerTipo: Tipo de dado a ser verificado (1 para estudantes, 2 para professores, etc.)
+    :param codigo: Código a ser verificado
+    :return: True se o código já estiver em uso, False caso contrário
+    """
+    return any(dado['codigo'] == codigo for dado in arrays_dados[gerTipo])
+
+def alterarCodigoSecundario(dado_com_campo, gerTipo, tipo_dado):
+    """
+    Função para alterar o código secundario de qualquer tipo de dado (ex: matrícula, turma, professor).
+
+    :param dado_com_campo: O dado que será alterado junto com seu campo.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Caso o usuario nao insira nenhum valor retorna o codigo existente, caso insira um novo retorna o novo.
+    """
+
+    # Validação do código
+    while True:
+        codigo = input(f"Insira o novo código do {tipo_dado} (ou ENTER para manter {dado_com_campo}): ")
+        
+        if not codigo:  # Se o usuário apertar ENTER, mantém o código atual
+            return dado_com_campo
+        
+        try:
+            codigo = int(codigo)  # Converte o código para inteiro
+            if verificarCodigoExistente(gerTipo, codigo):  # Verifica se o código existe
+                return codigo
+            else:
+                print("{} com o código informado não foi encontrado. Tente novamente.".format(tipo_dado.capitalize()))
+        except ValueError:
+            print("Código inválido. Deve ser um número inteiro.")
+
+def buscarPorCodigo(gerTipo, codigo):
+    """
+    Função para buscar um dado pelo código na lista de dados.
+
+    :param gerTipo: Tipo de dado (estudantes, professores, etc.)
+    :param codigo: Código do dado a ser buscado
+    :return: O dado encontrado ou None se não for encontrado
+    """
+    for dado in arrays_dados[gerTipo]:
+        if dado['codigo'] == codigo:
+            return dado
+    return None
+
+def excluirDados(gerTipo, secDesc):
+    """
+    Função para excluir dados (estudantes, professores, disciplinas, turmas, matrículas).
+
+    :param gerTipo: Tipo de dado a ser excluído
+    :param secDesc: Descritivo do menu secundário
+    :return: Não retorna dados
+    """
+    global arrays_dados
+
+    # Recupera o nome descritivo do tipo de dado a partir de gerOpcoes
+    nome_dado = gerOpcoes.get(gerTipo)
+
+    # Verifica se a lista correspondente ao tipo de dado está vazia
+    if not arrays_dados[gerTipo]:
+        print(f"A lista de {nome_dado} está vazia.\n")
         input("Pressione ENTER para continuar...")
         clear_console()
     else:
         while True:
             try:
-                #Insira o codigo do estudante a ser excluido
-                codigo_exclusao = int(input("Insira o Codigo do Estudante que será excluído: "))
+                # Solicita o código do dado a ser excluído
+                codigo_exclusao = int(input(f"Insira o código do(a) {nome_dado} que será excluído(a): "))
 
-                # Procura o estudante com o código informado
-                estudante_encontrado = None
-                for estudante in estudantes:
-                    if estudante["codigo"] == codigo_exclusao:
-                        estudante_encontrado = estudante
+                # Procura o dado com o código informado
+                dado_encontrado = None
+                for dado in arrays_dados[gerTipo]:
+                    if dado["codigo"] == codigo_exclusao:
+                        dado_encontrado = dado
                         break
 
-                if estudante_encontrado:
+                if dado_encontrado:
                     clear_console()
-                    estudantes.remove(estudante_encontrado)
-                    print(f"*** Estudante com código {codigo_exclusao} excluído com sucesso! ***")
-                    salvarEstudantes()
+                    arrays_dados[gerTipo].remove(dado_encontrado)
+                    print(f"*** {nome_dado.capitalize()} com código {codigo_exclusao} excluído com sucesso! ***")
+                    salvarDados(gerTipo)
                     input("Pressione ENTER para continuar...")
                     clear_console()
-                    break 
+                    break
                 else:
-                    #Informa caso nao tenha o estudante com o codigo informado
+                    # Informa caso não tenha o dado com o código informado
                     clear_console()
-                    print(f"*** Nenhum estudante encontrado com o código {codigo_exclusao}. ***")
+                    print(f"*** Nenhum(a) {nome_dado} encontrado(a) com o código {codigo_exclusao}. ***")
                     input("Pressione ENTER para continuar...")
                     clear_console()
-                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+                    print(f"----- {secDesc} {nome_dado} -----\n".upper())
 
-            #Trata o erro caso o usuario nao informe um int
+            # Trata o erro caso o usuário não informe um número inteiro
             except ValueError:
                 print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
                 input("Pressione ENTER para continuar...")
                 clear_console()
-                print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+                print(f"----- {secDesc} {nome_dado} -----\n".upper())
