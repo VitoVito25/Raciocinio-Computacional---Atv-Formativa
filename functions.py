@@ -382,104 +382,166 @@ def listarDados(gerTipo):
     input("Pressione ENTER para retornar ao Menu...")
     clear_console()
 
-def alterarEstudantes(gerDesc, secDesc):
+def alterarDados(gerTipo, secDesc):
     """
-        Função para alterar estudantes
+    Função genérica para alterar dados (estudantes, professores, disciplinas, turmas, matrículas).
 
-        :param gerDesc: Descritivo do menu principal
-        :param secDesc: Descritivo do menu secundario
-        :return: Não retorna dados
+    :param gerTipo: Tipo de dado a ser alterado (1-Estudantes, 2-Professores, 3-Disciplinas, 4-Turmas, 5-Matrículas)
+    :param secDesc: Descritivo do menu secundário
+    :return: Não retorna dados
     """
+    global arrays_dados
 
-    # Verifica se a lista de estudantes está vazia
-    if not estudantes:
-        print("A lista de estudantes está vazia.\n")
+    # Recupera o nome descritivo do tipo de dado a partir de gerOpcoes
+    nome_dado = gerOpcoes.get(gerTipo)
+
+    # Verifica se a lista correspondente ao tipo de dado está vazia
+    if not arrays_dados[gerTipo]:
+        print(f"A lista de {nome_dado} está vazia.\n")
         input("Pressione ENTER para continuar...")
         clear_console()
     else:
         while True:
             try:
-                # Insira o código do estudante a ser editado
-                codigo_edicao = int(input("Insira o Código do Estudante que será editado: "))
+                # Insere o código do dado a ser editado
+                codigo_edicao = int(input(f"Insira o Código do(a) {nome_dado} que será editado(a): "))
 
-                # Procura o estudante com o código informado
-                estudante_encontrado = None
-                for estudante in estudantes:
-                    if estudante["codigo"] == codigo_edicao:
-                        estudante_encontrado = estudante
+                # Procura o dado com o código informado
+                dado_encontrado = buscarPorCodigo(gerTipo, codigo_edicao)
 
-                        # Armazena os dados antigos para comparação posterior
-                        dados_anteriores = estudante_encontrado.copy()
-                        break
-                
-                # Permite que o usuário atualize o nome, CPF e/ou código
-                if estudante_encontrado:
-                    while True:
-                        #Validacao do novo codigo
-                        try:
-                            print(f"Estudante encontrado: Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
-                            novo_codigo = input(f"Insira o novo código (ou pressione ENTER para manter '{estudante_encontrado['codigo']}'): ")
-                            
-                            if novo_codigo == "":  # Se o usuário pressionar ENTER, mantém o código atual
-                                break
-                            
-                            novo_codigo = int(novo_codigo)  # Tenta converter a entrada para inteiro
+                if dado_encontrado:
+                    # Armazena os dados antigos para comparação posterior
+                    dados_anteriores = dado_encontrado.copy()
 
-                            # Verifica se o novo código já está em uso
-                            codigo_existente = any(estudante['codigo'] == novo_codigo for estudante in estudantes)
-                            
-                            if codigo_existente:
-                                print(f"*** O código {novo_codigo} já está em uso. Por favor, escolha um código diferente. ***")
-                                input("Pressione ENTER para tentar novamente...")
-                                clear_console()
-                                print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
-                            else:
-                                estudante_encontrado['codigo'] = novo_codigo  # Atualiza o código do estudante
-                                break
-                            
-                        except ValueError:
-                            clear_console()
-                            print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
-                            input("Pressione ENTER para tentar novamente...")
-                            clear_console()
-                            print("----- {} {} -----\n".format(secDesc, gerDesc).upper())                                        
-                    
-                    # Solicita novos Nome e CPF ou mantém os atuais se o usuário não informar nada
-                    novo_nome = input(f"Insira o novo nome (ou pressione ENTER para manter '{estudante_encontrado['nome']}'): ")
-                    novo_cpf = input(f"Insira o novo CPF (ou pressione ENTER para manter '{estudante_encontrado['cpf']}'): ")
-
-                    if novo_nome:
-                        estudante_encontrado['nome'] = novo_nome
-                    if novo_cpf:
-                        estudante_encontrado['cpf'] = novo_cpf
+                    # Solicita atualização dos campos, dependendo do tipo de dado
+                    if gerTipo in [1, 2]:  # Estudantes ou Professores (Nome e CPF)
+                        alterarNomeCpf(dado_encontrado, nome_dado)
+                    elif gerTipo == 3:  # Disciplinas (Apenas Nome)
+                        alterarNome(dado_encontrado, nome_dado)
+                    elif gerTipo == 4:  # Turmas (Professores e Disciplinas)
+                        alterarTurma(dado_encontrado)
+                    elif gerTipo == 5:  # Matrículas (Turmas)
+                        alterarMatricula(dado_encontrado)
 
                     # Exibe os dados anteriores e os dados atualizados
                     clear_console()
                     print("\nDados anteriores:")
-                    print(f"Código: {dados_anteriores['codigo']}, Nome: {dados_anteriores['nome']}, CPF: {dados_anteriores['cpf']}")
-                    print("\nDados atualizados:")
-                    print(f"Código: {estudante_encontrado['codigo']}, Nome: {estudante_encontrado['nome']}, CPF: {estudante_encontrado['cpf']}")
+                    for chave, valor in dados_anteriores.items():
+                        print(f"{chave.capitalize()}: {valor}")
 
-                    print(f"\n*** Estudante com código {codigo_edicao} atualizado com sucesso! ***")
-                    salvarDados(1)
+                    print("\nDados atualizados:")
+                    for chave, valor in dado_encontrado.items():
+                        print(f"{chave.capitalize()}: {valor}")
+
+                    print(f"\n*** {nome_dado.capitalize()} com código {codigo_edicao} atualizado com sucesso! ***")
+                    salvarDados(gerTipo)
                     input("Pressione ENTER para continuar...")
                     clear_console()
                     break
                 else:
-                    # Informa caso não tenha o estudante com o código informado
                     clear_console()
-                    print(f"*** Nenhum estudante encontrado com o código {codigo_edicao}. ***")
+                    print(f"*** Nenhum(a) {nome_dado} encontrado(a) com o código {codigo_edicao}. ***")
                     input("Pressione ENTER para continuar...")
                     clear_console()
-                    print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
 
-            # Trata o erro caso o usuário não informe um número inteiro
             except ValueError:
                 clear_console()
                 print("----- ENTRADA INVÁLIDA! POR FAVOR, INSIRA UM NÚMERO. -----")
                 input("Pressione ENTER para continuar...")
                 clear_console()
-                print("----- {} {} -----\n".format(secDesc, gerDesc).upper())
+
+def alterarNomeCpf(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar nome e CPF de estudantes ou professores.
+    """
+    # Altera o código do estudante ou professor
+    alterarCodigo(dado, gerTipo, tipo_dado)
+    
+    novo_nome = input(f"Insira o novo nome (ou pressione ENTER para manter '{dado['nome']}'): ")
+    novo_cpf = input(f"Insira o novo CPF (ou pressione ENTER para manter '{dado['cpf']}'): ")
+
+    if novo_nome:
+        dado['nome'] = novo_nome
+    if novo_cpf:
+        dado['cpf'] = novo_cpf
+
+def alterarTurma(dado):
+    """
+    Função para alterar os códigos de professor e disciplina de uma turma.
+    """
+    # Altera o código da turma
+    alterarCodigo(dado, 4, "turma")
+
+    # Validação do código do professor
+    while True:
+        try:
+            codigo_professor = int(input(f"Insira o novo código do professor (ou ENTER para manter '{dado['codigo_professor']}'): "))
+            if not any(professor['codigo'] == codigo_professor for professor in arrays_dados[2]):
+                print("Código do professor não encontrado. Tente novamente.")
+                continue
+            dado['codigo_professor'] = codigo_professor
+            break
+        except ValueError:
+            print("Código inválido. Deve ser um número inteiro.")
+
+    # Validação do código da disciplina
+    while True:
+        try:
+            codigo_disciplina = int(input(f"Insira o novo código da disciplina (ou ENTER para manter '{dado['codigo_disciplina']}'): "))
+            if not any(disciplina['codigo'] == codigo_disciplina for disciplina in arrays_dados[3]):
+                print("Código da disciplina não encontrado. Tente novamente.")
+                continue
+            dado['codigo_disciplina'] = codigo_disciplina
+            break
+        except ValueError:
+            print("Código inválido. Deve ser um número inteiro.")
+            
+def verificarCodigoExistente(gerTipo, codigo):
+    """
+    Verifica se um código já está em uso no tipo de dado especificado.
+    
+    :param gerTipo: Tipo de dado a ser verificado (1 para estudantes, 2 para professores, etc.)
+    :param codigo: Código a ser verificado
+    :return: True se o código já estiver em uso, False caso contrário
+    """
+    return any(dado['codigo'] == codigo for dado in arrays_dados[gerTipo])
+
+def alterarCodigo(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar o código de qualquer tipo de dado (ex: matrícula, turma, professor).
+    
+    :param dado: O dado que será alterado (dicionário com chave 'codigo').
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados, apenas altera o código no dicionário 'dado' se validado.
+    """
+    novo_codigo = input(f"Insira o novo código do(a) {tipo_dado} (ou pressione ENTER para manter '{dado['codigo']}'): ")
+    
+    while novo_codigo:
+        try:
+            novo_codigo = int(novo_codigo)
+            if verificarCodigoExistente(gerTipo, novo_codigo):
+                print(f"Código já existente para {tipo_dado}! Tente novamente.")
+                novo_codigo = input(f"Insira o novo código do(a) {tipo_dado} (ou pressione ENTER para manter '{dado['codigo']}'): ")
+            else:
+                dado['codigo'] = novo_codigo
+                break
+        except ValueError:
+            print("Código inválido. Deve ser um número inteiro.")
+            novo_codigo = input(f"Insira o novo código do(a) {tipo_dado} (ou pressione ENTER para manter '{dado['codigo']}'): ")
+
+def buscarPorCodigo(gerTipo, codigo):
+    """
+    Função para buscar um dado pelo código na lista de dados.
+
+    :param gerTipo: Tipo de dado (estudantes, professores, etc.)
+    :param codigo: Código do dado a ser buscado
+    :return: O dado encontrado ou None se não for encontrado
+    """
+    for dado in arrays_dados[gerTipo]:
+        if dado['codigo'] == codigo:
+            return dado
+    return None
 
 def excluirDados(gerTipo, secDesc):
     """

@@ -1,16 +1,6 @@
 from utils import clear_console
 from functions import *
 
-# Teste
-"""
-estudante = {"codigo": 1, "nome": 1, "cpf": 1}
-estudantes.append(estudante)
-estudante = {"codigo": 2, "nome": 2, "cpf": 2}
-estudantes.append(estudante)
-estudante = {"codigo": 3, "nome": 3, "cpf": 3}
-estudantes.append(estudante)
-"""
-
 ## Main App ##
 clear_console()
 inicio()
@@ -44,6 +34,6 @@ while True:
             case 2:
                 listarDados(gerTipo)    
             case 3:
-                alterarEstudantes(gerDesc, secDesc)
+                alterarDados(gerTipo, secDesc)
             case 4:
                 excluirDados(gerTipo, secDesc)
