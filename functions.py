@@ -322,7 +322,8 @@ def incluirDados(gerTipo):
             except ValueError:
                 print("Código inválido. Deve ser um número inteiro.")
 
-        dado = {"codigo_turma": codigo_turma, "codigo_estudante": codigo_estudante}
+        codigo = gerarCodigoUnico(gerTipo)  # Gera um código único para a matricula
+        dado = {"codigo": codigo, "codigo_turma": codigo_turma, "codigo_estudante": codigo_estudante}
 
     else:
         print("Tipo inválido! Escolha uma opção válida.")
@@ -387,7 +388,7 @@ def alterarDados(gerTipo):
     Função genérica para alterar dados (estudantes, professores, disciplinas, turmas, matrículas).
 
     :param gerTipo: Tipo de dado a ser alterado (1-Estudantes, 2-Professores, 3-Disciplinas, 4-Turmas, 5-Matrículas)
-    :param secDesc: Descritivo do menu secundário
+
     :return: Não retorna dados
     """
     global arrays_dados
@@ -421,7 +422,7 @@ def alterarDados(gerTipo):
                     elif gerTipo == 4:  # Turmas (Professores e Disciplinas)
                         alterarTurma(dado_encontrado, gerTipo, nome_dado)
                     elif gerTipo == 5:  # Matrículas (Turmas)
-                        alterarMatricula(dado_encontrado, nome_dado)
+                        alterarMatricula(dado_encontrado, gerTipo, nome_dado)
 
                     # Exibe os dados anteriores e os dados atualizados
                     clear_console()
@@ -453,7 +454,13 @@ def alterarDados(gerTipo):
 def alterarNomeCpf(dado, gerTipo, tipo_dado):
     """
     Função para alterar nome e CPF de estudantes ou professores.
+
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
     """
+
     # Altera o código do estudante ou professor
     alterarCodigo(dado, gerTipo, tipo_dado)
     
@@ -468,6 +475,11 @@ def alterarNomeCpf(dado, gerTipo, tipo_dado):
 def alterarNome(dado, gerTipo, tipo_dado):
     """
     Função para alterar nome de Disciplinas
+
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
     """
     # Altera o código
     alterarCodigo(dado, gerTipo, tipo_dado)
@@ -480,6 +492,11 @@ def alterarNome(dado, gerTipo, tipo_dado):
 def alterarTurma(dado, gerTipo, tipo_dado):
     """
     Função para alterar Turma
+
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
     """
     # Altera o código
     alterarCodigo(dado, gerTipo, tipo_dado)
@@ -489,6 +506,25 @@ def alterarTurma(dado, gerTipo, tipo_dado):
 
     # Validação do código da disciplina
     dado['codigo_disciplina'] = alterarCodigoSecundario(dado['codigo_disciplina'], 3, "disciplina")
+
+def alterarMatricula(dado, gerTipo, tipo_dado):
+    """
+    Função para alterar Matricula
+
+    :param dado: O dado que será alterado.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Não retorna dados.
+    """
+
+    # Altera o código
+    alterarCodigo(dado, gerTipo, tipo_dado)
+
+    # Validação do código da disciplina
+    dado['codigo_turma'] = alterarCodigoSecundario(dado['codigo_turma'], 4, "turma")
+
+    # Validação do código da disciplina
+    dado['codigo_estudante'] = alterarCodigoSecundario(dado['codigo_estudante'], 1, "estudante")
 
 def alterarCodigo(dado, gerTipo, tipo_dado):
     """
@@ -525,6 +561,14 @@ def verificarCodigoExistente(gerTipo, codigo):
     return any(dado['codigo'] == codigo for dado in arrays_dados[gerTipo])
 
 def alterarCodigoSecundario(dado_com_campo, gerTipo, tipo_dado):
+    """
+    Função para alterar o código secundario de qualquer tipo de dado (ex: matrícula, turma, professor).
+
+    :param dado_com_campo: O dado que será alterado junto com seu campo.
+    :param gerTipo: O tipo de dado que está sendo editado (para verificar existência de códigos).
+    :param tipo_dado: Descrição do tipo de dado (para mensagens).
+    :return: Caso o usuario nao insira nenhum valor retorna o codigo existente, caso insira um novo retorna o novo.
+    """
 
     # Validação do código
     while True:
