@@ -419,9 +419,9 @@ def alterarDados(gerTipo):
                     elif gerTipo == 3:  # Disciplinas (Apenas Nome)
                         alterarNome(dado_encontrado, gerTipo, nome_dado)
                     elif gerTipo == 4:  # Turmas (Professores e Disciplinas)
-                        alterarTurma(dado_encontrado)
+                        alterarTurma(dado_encontrado, gerTipo, nome_dado)
                     elif gerTipo == 5:  # Matrículas (Turmas)
-                        alterarMatricula(dado_encontrado)
+                        alterarMatricula(dado_encontrado, nome_dado)
 
                     # Exibe os dados anteriores e os dados atualizados
                     clear_console()
@@ -477,47 +477,18 @@ def alterarNome(dado, gerTipo, tipo_dado):
     if novo_nome:
         dado['nome'] = novo_nome
 
-
-def alterarTurma(dado):
+def alterarTurma(dado, gerTipo, tipo_dado):
     """
-    Função para alterar os códigos de professor e disciplina de uma turma.
+    Função para alterar Turma
     """
-    # Altera o código da turma
-    alterarCodigo(dado, 4, "turma")
-
-    # Validação do código do professor
-    while True:
-        try:
-            codigo_professor = int(input(f"Insira o novo código do professor (ou ENTER para manter '{dado['codigo_professor']}'): "))
-            if not any(professor['codigo'] == codigo_professor for professor in arrays_dados[2]):
-                print("Código do professor não encontrado. Tente novamente.")
-                continue
-            dado['codigo_professor'] = codigo_professor
-            break
-        except ValueError:
-            print("Código inválido. Deve ser um número inteiro.")
+    # Altera o código
+    alterarCodigo(dado, gerTipo, tipo_dado)
 
     # Validação do código da disciplina
-    while True:
-        try:
-            codigo_disciplina = int(input(f"Insira o novo código da disciplina (ou ENTER para manter '{dado['codigo_disciplina']}'): "))
-            if not any(disciplina['codigo'] == codigo_disciplina for disciplina in arrays_dados[3]):
-                print("Código da disciplina não encontrado. Tente novamente.")
-                continue
-            dado['codigo_disciplina'] = codigo_disciplina
-            break
-        except ValueError:
-            print("Código inválido. Deve ser um número inteiro.")
-            
-def verificarCodigoExistente(gerTipo, codigo):
-    """
-    Verifica se um código já está em uso no tipo de dado especificado.
-    
-    :param gerTipo: Tipo de dado a ser verificado (1 para estudantes, 2 para professores, etc.)
-    :param codigo: Código a ser verificado
-    :return: True se o código já estiver em uso, False caso contrário
-    """
-    return any(dado['codigo'] == codigo for dado in arrays_dados[gerTipo])
+    dado['codigo_professor'] = alterarCodigoSecundario(dado['codigo_professor'], 2, "professor")
+
+    # Validação do código da disciplina
+    dado['codigo_disciplina'] = alterarCodigoSecundario(dado['codigo_disciplina'], 3, "disciplina")
 
 def alterarCodigo(dado, gerTipo, tipo_dado):
     """
@@ -542,6 +513,34 @@ def alterarCodigo(dado, gerTipo, tipo_dado):
         except ValueError:
             print("Código inválido. Deve ser um número inteiro.")
             novo_codigo = input(f"Insira o novo código do(a) {tipo_dado} (ou pressione ENTER para manter '{dado['codigo']}'): ")
+
+def verificarCodigoExistente(gerTipo, codigo):
+    """
+    Verifica se um código já está em uso no tipo de dado especificado.
+    
+    :param gerTipo: Tipo de dado a ser verificado (1 para estudantes, 2 para professores, etc.)
+    :param codigo: Código a ser verificado
+    :return: True se o código já estiver em uso, False caso contrário
+    """
+    return any(dado['codigo'] == codigo for dado in arrays_dados[gerTipo])
+
+def alterarCodigoSecundario(dado_com_campo, gerTipo, tipo_dado):
+
+    # Validação do código do professor
+    while True:
+        codigo = input(f"Insira o novo código do professor (ou ENTER para manter {dado_com_campo}): ")
+        
+        if not codigo:  # Se o usuário apertar ENTER, mantém o código atual
+            return dado_com_campo
+        
+        try:
+            codigo = int(codigo)  # Converte o código para inteiro
+            if verificarCodigoExistente(gerTipo, codigo):  # Verifica se o código existe
+                return codigo
+            else:
+                print("{} com o código informado não foi encontrado. Tente novamente.".format(tipo_dado.capitalize()))
+        except ValueError:
+            print("Código inválido. Deve ser um número inteiro.")
 
 def buscarPorCodigo(gerTipo, codigo):
     """
