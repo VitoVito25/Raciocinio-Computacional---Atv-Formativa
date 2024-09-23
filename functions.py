@@ -378,7 +378,7 @@ def listarDados(gerTipo):
         # Matrículas (código da turma e do estudante)
         elif gerTipo == 5:
             for dado in arrays_dados[gerTipo]:
-                print(f"Código Turma: {dado['codigo_turma']}, Código Estudante: {dado['codigo_estudante']}")
+                print(f"Código: {dado['codigo']}, Código Turma: {dado['codigo_turma']}, Código Estudante: {dado['codigo_estudante']}")
     
     input("Pressione ENTER para retornar ao Menu...")
     clear_console()
